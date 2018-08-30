@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{:C(VAR_TITLE)}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="/Public/images/icon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/Public/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/Public/js/dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="/Public/js/layui-1.0.9/css/layui.css" />
+    <script src="/Public/js/jquery.js"></script>
+    <script src="/Public/js/plug-ins/customScrollbar.min.js"></script>
+    <script src="/Public/js/plug-ins/echarts.min.js"></script>
+    <script src="/Public/js/plug-ins/layerUi/layer.js"></script>
+    <script src="/Public/editor/ueditor.config.js"></script>
+    <script src="/Public/editor/ueditor.all.js"></script>
+    <script src="/Public/js/plug-ins/pagination.js"></script>
+    <script src="/Public/js/public.js"></script>
+    <script src="/Public/js/layui-1.0.9/layui.js"></script>
+    <script src="/Public/js/dataTables.min.js"></script>
+    <script language="javascript" src="/Public/js/jquery-1.4.4.min.js"></script>
+    <script language="javascript" src="/Public/js/jquery.jqprint-0.3.js"></script>
+    <script language="javascript" src="/Public/js/jquery-migrate-1.2.1.min.js"></script>
+</head>
+
+<body>
+    <style>
+        #some-table {
+            font-size: 12px;
+            border: 1px solid #000;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #some-table .title {
+            margin: 3px 0;
+            position: relative;
+            display: inline-block;
+        }
+
+        #some-table .title:after {
+            content: '';
+            height: 1px;
+            width: 100%;
+            position: absolute;
+            background-color: #000;
+            bottom: 1px;
+            left: 0;
+        }
+
+        #some-table .title:before {
+            content: '';
+            height: 1px;
+            width: 100%;
+            position: absolute;
+            background-color: #000;
+            bottom: 3px;
+            left: 0;
+        }
+
+        #some-table td,
+        #some-table th {
+            border: 1px solid #000;
+            font-weight: normal;
+            height: 30px;
+            text-align: center;
+        }
+
+        #some-table td.left,
+        #some-table th.left {
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        #some-table .gray {
+            background-color: #eee;
+        }
+
+        #print{
+            background-color: transparent;
+            border-color: #009688;
+            color: #009688;
+        }
+
+        #print:hover{
+            background: #009688;
+            color: white;
+        }
+
+    </style>
+    <table id="some-table">
+        <thead>
+            <tr>
+                <th colspan="13">
+                    <h1 class="title"><font size="3">票&emsp;据&emsp;来&emsp;往&emsp;凭&emsp;证</font></h1>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr>
+                <th>日期</th>
+                <th colspan="4">{$data.creation_date|date="Y-m-d",###}</th>
+                <th>编号：</th>
+                <th colspan="2"><input name="编号" type="text" class="form-control" placeholder=""></th>
+                <th>利润：</th>
+                <th><input name="利润" type="text" class="form-control" placeholder=""></th>
+                <th>类型：</th>
+                <th colspan="2"><input name="类型" type="text" class="form-control" placeholder=""></th>
+            </tr>
+            <tr>
+                <th rowspan="2">天数</th>
+                <th colspan="3">报价信息</th>
+                <th rowspan="2">票后6位</th>
+                <th rowspan="2">承兑行</th>
+                <th rowspan="2">到期日</th>
+                <th rowspan="2">面值（万元）</th>
+                <th colspan="2" rowspan="2">价格（/10万）</th>
+                <th rowspan="2">票款（元）</th>
+                <th rowspan="2">小款（元）</th>
+                <th rowspan="2">背书收款金额</th>
+            </tr>
+            <tr>
+                <th>利率</th>
+                <th>/10万+</th>
+                <th>调整</th>
+            </tr>
+            <tr>
+                <td class='gray' rowspan="2">{$data.days_remaining}天</td>
+                <td class='gray' rowspan="2">{$data.money_rate}%</td>
+                <td class='gray' rowspan="2">{$data.mark_up}</td>
+                <td class='gray' rowspan="2">{$data.company_quotation}</td>
+                <td class='gray' rowspan="2">{$data.bill_number}</td>
+                <td class='gray' rowspan="2">{$data.accepting_bank}</td>
+                <td class='gray' rowspan="2">{$data.endtime}</td>
+                <td class='gray' rowspan="2">{$data.amount}</td>
+                <th>中介报价</th>
+                <th class="gray"><if condition="$data.intermediary_quotation eq 0 ">{$data.company_quotation} <else/> {$data.intermediary_quotation}</if></td>   <!--中介报价-->
+                <td rowspan="2">{$data.big_fare}</td>
+                <td rowspan="2">{$data.small_fare}</td>
+                <td rowspan="2"></td>
+            </tr>
+            <tr>
+                <th>公司报价</th>
+                <td>{$data.company_quotation}</td>   <!--公司报价-->
+            </tr>
+            <tr>
+                <td colspan="13">&nbsp;</td>
+            </tr>
+            <tr>
+                <th colspan="2">小款信息：</th>
+                <td class="gray left" colspan="11">{$data.fare_customer_account} {$data.small_fare_customer_bank} {$data.small_fare_customer_phone}</td>
+            </tr>
+            <tr>
+                <th colspan="2">备注：</th>
+                <td class="gray left" colspan="11"></td>  {//备注}
+            </tr>
+            <tr>
+                <th colspan="2">业务员</th>
+                <td class="gray" colspan="4">{$data.salas_name}</td>
+                <th colspan="2">报价</th>
+                <th>{$data.finance_name}</th>
+                <th>复核</th>
+                <th>&nbsp;</th>
+                <th>出口</th>
+                <th>&nbsp;</th>
+            </tr>
+            <tr>
+                <th colspan="8">打款信息</th>
+                <th colspan="5">背书信息</th>
+            </tr>
+            <tr>
+                <th>户名:</th>
+                <td class="gray left" colspan="7">{$data.big_fare_customer_name}</td>
+                <th>户名:</th>
+                <td colspan="4"><input name="类型" type="text" class="form-control" placeholder=""></td>
+            </tr>
+            <tr>
+                <th>账号:</th>
+                <td class="gray left" colspan="7">{$data.big_fare_customer_account}</td>
+                <th>账号:</th>
+                <td colspan="4"><input name="类型" type="text" class="form-control" placeholder=""></td>
+            </tr>
+            <tr>
+                <th>开户行:</th>
+                <td class="gray left" colspan="7">{$data.big_fare_customer_bank}</td>
+                <th>开户行:</th>
+                <td colspan="4"><input name="类型" type="text" class="form-control" placeholder=""></td>
+            </tr>
+            <tr>
+                <th>行号:</th>
+                <td class="gray left" colspan="7">{$data.big_fare_bank_number}</td>
+                <th>行号:</th>
+                <td colspan="4"><input name="类型" type="text" class="form-control" placeholder=""></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!--<div class="layui-btn-group" style="margin-top: 60px;" title="打印">-->
+        <!--<button class="layui-btn layui-btn-big"><i class="layui-icon"></i></button>-->
+    <!--</div>-->
+    <if  condition="$Think.session.userInfo.is_finance eq 1">
+    <button class="btn btn-danger-outline btn-block" style="width: 70%; display:block;margin: 0 auto; margin-top: 100px;" id="print">打印此报单</button>
+    </if>
+</body>
+
+
+<script>
+    $('#print').bind('click',function () {
+        $('#print').hide();
+        window.print();
+        $('#print').show();
+//        document.execCommand('print');
+    });
+
+
+</script>
+
+
+</html>

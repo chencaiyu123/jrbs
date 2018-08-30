@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>{:C(VAR_TITLE)}</title>
+    <meta name="keywords"  content="" />
+    <meta name="description" content="" />
+    <meta name="author" content="fedde.Qin" />
+    <meta name="renderer" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+    <link rel="icon" href="/Public/images/icon/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/Public/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/Public/css/dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="/Public/js/layui-1.0.9/css/layui.css" />
+    <script src="/Public/js/jquery.js"></script>
+    <script src="/Public/js/plug-ins/customScrollbar.min.js"></script>
+    <script src="/Public/js/plug-ins/echarts.min.js"></script>
+    <script src="/Public/js/plug-ins/layerUi/layer.js"></script>
+    <script src="/Public/editor/ueditor.config.js"></script>
+    <script src="/Public/editor/ueditor.all.js"></script>
+    <script src="/Public/js/plug-ins/pagination.js"></script>
+    <script src="/Public/js/public.js"></script>
+    <script src="/Public/js/layui-1.0.9/layui.js"></script>
+    <script src="/Public/js/dataTables.min.js"></script>
+    <style>
+        .side-menu li.open dd:hover{
+            background: #333e48;
+            color:#9ca2a8!important;
+        }
+
+        .side-menu li dd:hover{
+            background: #333e48;
+            color: #9ca2a8!important;
+        }
+        .child{
+            position: relative;
+            display: block;
+        }
+
+        .child:after{
+            font-family: "iconfont";
+            content: "\f105";
+            position: absolute;
+            left:-10px;
+            top:2px;
+            transition: .5s ease 0s;
+            transform: rotate(0deg);
+        }
+
+        .openChild .child + ul{
+            display: block;
+        }
+
+
+        .openChild  .child:after{
+            transform: rotate(90deg);
+
+        }
+
+
+
+        .child + ul {
+            display: none;
+            padding-top: 20px;
+        }
+        .child + ul li{
+            padding-left: 10px;
+            border-bottom: none;
+            line-height: 2.5;
+        }
+
+        .side-menu li.open dd:hover li a{
+            color:#969696!important;
+        }
+
+    </style>
+</head>
+<body>
+
+<script>
+    $(document).ready(function(){
+        var index      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        setTimeout(checkLogin(index),5000);
+
+
+        $('.child').on('click',function(){
+            var _ul = $(this).next();
+            _ul.is(':hidden') ? _ul.parent().addClass('openChild'):_ul.parent().removeClass('openChild');
+            // console.log(_ul.parent().index())
+        })
+
+
+
+    });
+
+
+    function checkLogin(index) {
+        var user        ='{$Think.session.userInfo.username}';
+        var loginUrl    = '/index.php/Admin/index/checklogin'
+        if(!user){
+            layer.msg('登录信息失效，请重新登录',{icon:2});
+            location.href = 'http://www.sebation.com';
+        }
+        $.ajax({
+            type: "POST",
+            timeout:20000,
+            url: loginUrl,
+            data: {user:user},
+            dataType: "json",
+            success: function(data){
+                layer.close(index);
+                if(data.code == 201){
+                    layer.msg(data.msg,function () {
+                        location.href = 'http://www.sebation.com';
+                    });
+                }else if(data.code == 202){
+                    layer.msg(data.msg,function () {
+                        location.href = 'http://www.sebation.com';
+                    });
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        });
+    }
+</script>

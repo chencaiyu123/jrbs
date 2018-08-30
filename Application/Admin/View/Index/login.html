@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>{:C(VAR_TITLE)}</title>
+<meta name="keywords"  content="" />
+<meta name="description" content="" />
+<meta name="author" content="DeathGhost" />
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name='apple-touch-fullscreen' content='yes'>
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta name="format-detection" content="address=no">
+<link rel="icon" href="/Public/image/icon/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="/Public/css/style.css" />
+
+<script src="/Public/js/jquery.js"></script>
+<script src="/Public/js/public.js"></script>
+
+<script src="/Public/js/plug-ins/customScrollbar.min.js"></script>
+<script src="/Public/js/plug-ins/layerUI/layer.js"></script>
+<script src="/Public/js/plug-ins/layerUi/layer.js"></script>
+
+</head>
+
+<style>
+#entry {
+	background-color: rgb(75, 207, 153);
+	color: #f9f9f9;
+}
+.layui-tab{
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color:#d7dde4 ;
+}
+.layui-tab-title{
+	font-size: 0;
+
+}
+.layui-tab-title li{
+	width:50%;
+	display: inline-block;
+	vertical-align: middle;
+	font-size: 16px;
+	transition: all .2s;
+	-webkit-transition: all .2s;
+	position: relative;
+	line-height: 40px;
+	min-width: 65px;
+	padding: 0 15px;
+	text-align: center;
+	cursor: pointer;
+}
+.layui-tab-title li.layui-this{
+	color:#5FB878
+}
+.layui-tab-title li.layui-this:after{
+	content: '';
+	height: 1px;
+	position: absolute;
+	bottom:-1px;
+	left:0;
+	right:0;
+	background: #5FB878;
+	z-index: 2;
+
+}
+
+.layui-tab-brief>.layui-tab-more li.layui-this:after, .layui-tab-brief>.layui-tab-title .layui-this:after {
+	border: none;
+	border-radius: 0;
+	border-bottom: 2px solid #5FB878;
+}
+
+
+.login-contain header{
+	border-bottom: none;
+	padding: 20px 0 0px;
+}
+.login-contain .form-content{
+	margin: 20px 50px;
+}
+</style>
+
+<body class="login-page">
+	<section class="login-contain">
+
+		<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+			<ul class="layui-tab-title">
+				<li class="layui-this" type="1">管理员</li>
+				<li type="0">普通用户</li>
+
+			</ul>
+
+		</div>
+
+		<header id="header">
+			<h1>金融业务管理系统</h1>
+			<p>management system</p>
+		</header>
+
+
+		<div class="form-content">
+			<ul>
+				<li>
+					<div class="form-group">
+						<label class="control-label">用户账号：</label>
+						<input type="text" placeholder="" class="form-control form-underlined" id="adminName"/>
+					</div>
+				</li>
+				<li>
+					<div class="form-group">
+						<label class="control-label">用户密码：</label>
+						<input type="password" placeholder="" class="form-control form-underlined" id="adminPwd"/>
+					</div>
+				</li>
+				<li>
+					<div class="form-group">
+						<label class="control-label">验证码：</label>
+						<input type="text" placeholder="" class="form-control form-underlined" id="verify"/>
+						<img src='/Admin/Index/verify' alt="" onclick='this.src=this.src+"?"+Math.random()' id="imgVerify">
+					</div>
+				</li>
+
+				<!--<li>-->
+					<!--<label class="check-box">-->
+						<!--<input type="checkbox" name="login" id="login" value="1"/>-->
+						<!--<span>管理员登录</span>-->
+					<!--</label>-->
+				<!--</li>-->
+
+				<li>
+					<button class="btn btn-lg btn-block" id="entry">立即登录</button>
+				</li>
+				<li>
+					<p class="btm-info"><a href="javascript:void(0);" target="" id="forget">忘记密码</a></p>
+					<address class="btm-info"></address>
+				</li>
+			</ul>
+		</div>
+	</section>
+<div class="mask"></div>
+<div class="dialog">
+	<div class="dialog-hd">
+		<strong class="lt-title">标题</strong>
+		<a class="rt-operate icon-remove JclosePanel" title="关闭"></a>
+	</div>
+	<div class="dialog-bd">
+		<!--start::-->
+		<p></p>
+		<!--end::-->
+	</div>
+	<div class="dialog-ft">
+		<button class="btn btn-info JyesBtn">确认</button>
+		<!--<button class="btn btn-secondary JnoBtn">关闭</button>-->
+	</div>
+</div>
+</body>
+
+<script type="text/javascript">
+
+	var loginType = 1;
+
+
+
+
+    $('.layui-tab-title').on('click','li',function(){
+               $('.layui-tab-title li').removeClass('layui-this');
+               $(this).addClass('layui-this');
+                loginType = $(this).attr('type');
+
+	})
+	$('#forget').click(function(){
+	    var name = $('#adminName').val();
+        var login   = loginType;
+        var url     = '/index.php/Admin/Index/getEmail';
+        if(name ==''){
+            $('.mask,.dialog').show();
+            $('.lt-title').html('警告');
+            $('.dialog .dialog-bd p').html('请先输入账号');
+		}else{
+            $.ajax({
+                type:'post',
+                url : url,
+                timeout:20000,
+                async:true,
+                data:{'name':name,login:login},
+                dataType: 'json',
+                success:function (data) {
+                    $('.login-contain').hide();
+                    if (data.code == 201) {
+                        layer.msg(data.msg, {icon: 2}, function () {
+                            $('#header').html('	<h1>宝筹金融业务管理系统</h1> <p>management system</p>');
+                            $('.login-contain').show();
+                            $('.form-content').show(700);
+                        });
+                    }else if (data.code == 202){
+                        layer.msg(data.msg,{icon: 3},function () {
+                            $('#header').html('	<h1>宝筹金融业务管理系统</h1> <p>management system</p>');
+                            $('.login-contain').show();
+                            $('.form-content').show(700);
+                            $('#imgVerify').attr('src','/Admin/Index/verify'+"?"+Math.random());
+                        });
+                    }else if (data.code == 200){
+
+                            location.href = '/index.php/Admin/Index/forgetPassword?email='+data.email+'&user='+data.user+'&auth='+data.auth;
+
+                    }
+                },
+				error:function(XMLHttpRequest, Status) {
+                    $('#header').hide();
+                    $('.login-contain').hide();
+                    if(Status == 'timeout'){
+                        layer.msg('请求超时',{icon:5},function () {
+                            $('#header').html('	<h1>宝筹金融业务管理系统</h1> <p>management system</p>');
+                            $('#header').show();
+                            $('.login-contain').show();
+                            $('.form-content').show(700);
+                            $('#imgVerify').attr('src','/Admin/Index/verify'+"?"+Math.random());
+                        });
+                    }
+                }
+            });
+		}
+	});
+    $('#entry').click(function(){
+        var name 	= $('#adminName').val();
+        var pwd 	= $('#adminPwd').val();
+        var login   = loginType;
+        var verify  = $('#verify').val();
+        var url     = '/index.php/Admin/index/login';
+        if(name ==''){
+            $('.mask,.dialog').show();
+            $('.lt-title').html('警告');
+            $('.dialog .dialog-bd p').html('请输入账号');
+        }else if(pwd =='') {
+            $('.mask,.dialog').show();
+            $('.lt-title').html('警告');
+            $('.dialog .dialog-bd p').html('请输入密码');
+        }else if(verify == ''){
+            $('.mask,.dialog').show();
+            $('.lt-title').html('警告');
+            $('.dialog .dialog-bd p').html('请输入验证码');
+        }else{
+            $('.mask,.dialog').hide();
+            $('.form-content').hide(700);
+            $('#header').html('<span><span class="icon-spin icon-cogs"></span>登录中...</span>');
+            setTimeout(loginAjax(url,name,pwd,login,verify),5000);
+        }
+    });
+
+
+
+    $(document).keyup(function(event){
+        if(event.keyCode ==13){
+            $("#entry").on("click");
+            var name 	= $('#adminName').val();
+            var pwd 	= $('#adminPwd').val();
+            var login   = loginType;
+            var verify  = $('#verify').val();;
+            var url     = '/index.php/Admin/index/login';
+            if(name ==''){
+                $('.mask,.dialog').show();
+                $('.lt-title').html('警告');
+                $('.dialog .dialog-bd p').html('请输入账号');
+            }else if(pwd ==''){
+                $('.mask,.dialog').show();
+                $('.lt-title').html('警告');
+                $('.dialog .dialog-bd p').html('请输入密码');
+            }else if(verify == ''){
+                $('.mask,.dialog').show();
+                $('.lt-title').html('警告');
+                $('.dialog .dialog-bd p').html('请输入验证码');
+            }else{
+                $('.mask,.dialog').hide();
+                $('.form-content').hide(700);
+                $('#header').html('<span><span class="icon-spin icon-cogs"></span>登录中...</span>');
+                setTimeout(loginAjax(url,name,pwd,login,verify),5000);
+            }
+        }
+    });
+
+    function loginAjax(url,name,pwd,login,verify) {
+        $.ajax({
+            type:'post',
+            url : url,
+			timeout:20000,
+            async:true,
+            data:{'name':name,'password':pwd,login:login,'verify':verify},
+            dataType: 'json',
+            success:function (data) {
+                $('.login-contain').hide();
+                if (data.code == 400){
+                    layer.msg(data.msg,{icon: 2},function () {
+                        $('#header').html('	<h1>宝筹金融业务管理系统</h1> <p>management system</p>');
+                        $('.login-contain').show();
+                        $('.form-content').show(700);
+                        $('#imgVerify').attr('src','/Admin/Index/verify'+"?"+Math.random());
+                    });
+                }else if (data.code == 202){
+                    layer.msg(data.msg,{icon: 3},function () {
+                        $('#header').html('	<h1>宝筹金融业务管理系统</h1> <p>management system</p>');
+                        $('.login-contain').show();
+                        $('.form-content').show(700);
+                        $('#imgVerify').attr('src','/Admin/Index/verify'+"?"+Math.random());
+                    });
+                }else if (data.code == 201){
+                    layer.msg(data.msg,{icon: 4},function () {
+                        $('#header').html('	<h1>宝筹金融业务管理系统</h1> <p>management system</p>');
+                        $('.login-contain').show();
+                        $('.form-content').show(700);
+                        $('#imgVerify').attr('src','/Admin/Index/verify'+"?"+Math.random());
+                    });
+                }else if (data.code == 200){
+                    layer.msg(data.msg, {icon:6},function () {
+                        $('#imgVerify').attr('src','/Admin/Index/verify'+"?"+Math.random());
+						location.href = '/index.php/Admin/Forms/formsList';
+                    });
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                $('#header').hide();
+                $('.login-contain').hide();
+                if(Status == 'timeout'){
+                    layer.msg('请求超时',{icon:5},function () {
+                        $('#header').html('	<h1>宝筹金融业务管理系统</h1> <p>management system</p>');
+                        $('#header').show();
+                        $('.login-contain').show();
+                        $('.form-content').show(700);
+                        $('#imgVerify').attr('src','/Admin/Index/verify'+"?"+Math.random());
+                    });
+                }
+            }
+        });
+    }
+</script>
+
+</html>

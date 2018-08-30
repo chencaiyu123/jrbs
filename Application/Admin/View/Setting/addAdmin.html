@@ -1,0 +1,146 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="icon-columns"></i>添加管理员</h2>
+            </header>
+            <hr>
+        </section>
+
+        <form class="layui-form layui-form-pane" action="">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">管理员账号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="username" lay-verify="required|username" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" lay-verify="required|ischn" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" name="password" placeholder="123456" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" style="color: orangered">默认密码123456</div>
+            </div>
+
+            <div class="layui-form-item"  id="select3">
+                <label class="layui-form-label">管理权限</label>
+                <div class="layui-input-inline">
+                    <select name="level"  id="group" >
+                        <option value="0">请选择管理权限</option>
+                        <option value="1">一级管理员</option>
+                        <option value="2">二级管理员</option>
+                        <option value="3">三级管理员</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo2">提交</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+    var postDataUrl      = '/index.php/Admin/setting/ajaxPostAdmin';
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+
+        form.verify({
+            ischn:function (value) {
+                if(!isChn(value)){
+                    return '输入中文';
+                }
+            },
+            username: function(value){
+                if(value.length < 5){
+                    return '管理员名长度必须大于5位';
+                }else if(value.length > 16){
+                    return '管理员名长度必须小于16位';
+                }else if(isChn(value)){
+                    return '不能输入中文';
+                }
+            },
+        });
+
+
+        //监听提交
+        form.on('submit(demo2)', function(data){
+
+            if(data.field.level == 0){
+                layer.msg('请选择管理权限',{icon:5,shift:6});
+                return false;
+            }
+
+            if(!data.field.password){
+                data.field.password = '123456';
+            }
+            postData(postDataUrl,data);
+        });
+
+    });
+
+
+    function postData(postDataUrl,Data) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: postDataUrl,
+            data:Data.field,
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200) {
+                    layer.msg(data.msg, {icon: 6},function () {
+                        location.href = '/index.php/Admin/setting/adminslist';
+                    });
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        })
+    }
+
+
+    /**
+     * 判断是否为中文
+     * @param str
+     * @returns {boolean}
+     */
+    function isChn(str){
+        var reg = /^[\u4E00-\u9FA5]+$/;
+        if(!reg.test(str)){return false;}
+        return true;
+    }
+</script>
+
+<include file="Public/ft" />

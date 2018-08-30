@@ -1,0 +1,287 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="icon-columns"></i>添加关系链数据</h2>
+            </header>
+            <hr>
+        </section>
+
+        <form class="layui-form layui-form-pane" action="">
+
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 150px">选择上下游公司</label>
+                <div class="layui-input-inline" style="width: 50px;">
+                    <input type="checkbox" checked="" name="open" lay-skin="switch" lay-filter="switchTest" lay-text="上|下">
+                </div>
+            </div>
+
+
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 150px;">公司</label>
+                <div class="layui-input-inline">
+                    <select  id="select" name="company" lay-verify="required" lay-filter="select" >
+                        <option value="0">请选择</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 150px;">分类</label>
+                <div class="layui-input-inline">
+                    <select  id="category" name="category" lay-verify="required" lay-filter="select" >
+                        <option value="0">请选择</option>
+                        <foreach name="category" item="vo">
+                            <option value="{$vo.id}">{$vo.category}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: 150px">交易时间</label>
+                    <div class="layui-input-inline">
+                        <input id="starttime" name="time" type="text" class="form-control" lay-verify="required" placeholder="交易时间" style="width:238px;" onclick="layui.laydate({elem: this,festival: true})">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label" style="width: 150px" >金额</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="price" placeholder="￥" autocomplete="off" class="layui-input" lay-verify="required">
+                    </div>
+                </div>
+            </div>
+
+
+            <!--<div class="layui-inline">-->
+                <!--<select name="city" lay-verify="required" lay-search="">-->
+                    <!--<option value="">带搜索的选择框</option>-->
+                    <!--<option value="1">layer</option>-->
+                    <!--<option value="2">form</option>-->
+                    <!--<option value="3">layim</option>-->
+                    <!--<option value="4">element</option>-->
+                    <!--<option value="5">laytpl</option>-->
+                    <!--<option value="6">upload</option>-->
+                    <!--<option value="7">laydate</option>-->
+                    <!--<option value="8">laypage</option>-->
+                    <!--<option value="9">flow</option>-->
+                    <!--<option value="10">util</option>-->
+                    <!--<option value="11">code</option>-->
+                    <!--<option value="12">tree</option>-->
+                    <!--<option value="13">layedit</option>-->
+                    <!--<option value="14">nav</option>-->
+                    <!--<option value="15">tab</option>-->
+                    <!--<option value="16">table</option>-->
+                    <!--<option value="17">select</option>-->
+                    <!--<option value="18">checkbox</option>-->
+                    <!--<option value="19">switch</option>-->
+                    <!--<option value="20">radio</option>-->
+                <!--</select><div class="layui-form-select"><div class="layui-select-title"><input type="text" placeholder="带搜索的选择框" value="" class="layui-input"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit" style=""><dd lay-value="" class="layui-select-tips">带搜索的选择框</dd><dd lay-value="1" class="">layer</dd><dd lay-value="2" class="">form</dd><dd lay-value="3" class="">layim</dd><dd lay-value="4" class="">element</dd><dd lay-value="5" class="">laytpl</dd><dd lay-value="6" class="">upload</dd><dd lay-value="7" class="">laydate</dd><dd lay-value="8" class="">laypage</dd><dd lay-value="9" class="">flow</dd><dd lay-value="10" class="">util</dd><dd lay-value="11" class="">code</dd><dd lay-value="12" class="">tree</dd><dd lay-value="13" class="">layedit</dd><dd lay-value="14" class="">nav</dd><dd lay-value="15" class="">tab</dd><dd lay-value="16" class="">table</dd><dd lay-value="17" class="">select</dd><dd lay-value="18" class="">checkbox</dd><dd lay-value="19" class="">switch</dd><dd lay-value="20" class="">radio</dd></dl></div>-->
+            <!--</div>-->
+
+            <div class="layui-form-item">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo2">提交</button>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+    var cid = '{$cid}';
+    var postTransactionUrl  = '/index.php/Admin/setting/addTransaction';
+    var getRelationListUrl = '/index.php/Admin/setting/getRelationList';
+    layer.tips('默认-上游公司', '.layui-input-inline');
+
+
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+        form.verify({});
+
+
+        form.on('switch(switchTest)', function(data){
+            var val  = this.checked ? 'true': 'false';
+            if(val == 'false'){
+                layer.tips('当前-下游公司', '.layui-input-inline');
+                var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+                $.ajax({
+                    type: "POST",
+                    url: getRelationListUrl,
+                    data: {cid:cid,type:2},
+                    dataType: "json",
+                    timeout:20000,
+                    success: function(data){
+                        if(data.code == 200) {
+                            $('#select').empty();
+                            $("#select").append('<option value="0">请选择</option>');
+                            $.each(data.data, function(key, val) {
+                                $("#select").append('<option value="' + val.id + '">' + val.company + '</option>');
+                            });
+                            form.render('select');
+                            layer.close(loading);
+                        }else{
+                            layer.msg(data.msg,{icon:5});
+                        }
+                    },
+                    error:function (XMLHttpRequest, Status) {
+                        layer.close(loading);
+                        if(Status == 'timeout'){
+                            layer.close(index);
+                            layer.msg('请求超时',{icon:5});
+                        }
+                    }
+                });
+            }else{
+                layer.tips('当前-上游公司', '.layui-input-inline');
+                var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+                $.ajax({
+                    type: "POST",
+                    url: getRelationListUrl,
+                    data: {cid:cid},
+                    dataType: "json",
+                    timeout:20000,
+                    success: function(data){
+                        if(data.code == 200) {
+                            $('#select').empty();
+                            $("#select").append('<option value="0">请选择</option>');
+                            $.each(data.data, function(key, val) {
+                                $("#select").append('<option value="' + val.id + '">' + val.company + '</option>');
+                            });
+                            form.render('select');
+                            layer.close(loading);
+                        }else{
+                            layer.msg(data.msg,{icon:5});
+                        }
+                    },
+                    error:function (XMLHttpRequest, Status) {
+                        layer.close(loading);
+                        if(Status == 'timeout'){
+                            layer.close(index);
+                            layer.msg('请求超时',{icon:5});
+                        }
+                    }
+                });
+            }
+        });
+
+
+        /**
+         *
+         * 动态加载select数据
+         * */
+
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: getRelationListUrl,
+            data: {cid:cid},
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                if(data.code == 200) {
+                    $.each(data.data, function(key, val) {
+                        $("#select").append('<option value="' + val.id + '">' + val.company + '</option>');
+                    });
+                    form.render('select');
+                    layer.close(loading);
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        });
+
+        // var html = "";
+        // html += '<option value="6" class="">北京</option>';
+        // html += '<option value="1">上海</option>';
+        // html += '<option value="2">广州</option>';
+        // html += '<option value="3">深圳</option>';
+        // html += '<option value="4">杭州</option>';
+        // $("#select").append(html);
+        //
+        /************************************/
+
+
+        //监听提交
+        form.on('submit(demo2)', function(data){
+            if(data.field.open == 'on'){
+                data.field.type = 1;  //1为上游公司
+            }else{
+                data.field.type = 2;  //2位下游公司
+            }
+
+            if(data.field.company == 0){
+                layer.msg('请选择公司');
+                return false;
+            }
+
+
+            if(data.field.category == 0){
+                layer.msg('请选择分类');
+                return false;
+            }
+            data.field.id = cid;
+            console.log(data.field);
+            postData(postTransactionUrl,data.field)
+        });
+    });
+
+
+    function postData(postDataUrl,data) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: postDataUrl,
+            data: {data:data},
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200) {
+                    layer.msg(data.msg, {icon: 6},function () {
+                        location.href = '/index.php/Admin/setting//Reports/id/'+cid;
+                    });
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        })
+    }
+</script>
+
+<include file="Public/ft" />

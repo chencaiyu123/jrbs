@@ -1,0 +1,291 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+
+<style>
+    .lala-table {
+        -webkit-font-smoothing: antialiased;
+        font-family: sans-serif;
+        text-align: center;
+        border-collapse: collapse;
+    }
+
+    .lala-table td,
+    .lala-table th {
+        border: 1px solid #333;
+    }
+
+    .lala-table .blue-block {
+        background: #ddebf7;
+    }
+
+    .lala-table .blue-row {
+        background: #5b9bd5;
+        color: #fff;
+    }
+
+    .lala-table th,
+    .lala-table td {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .lala-toggle-container {
+        position: relative;
+        text-align: left;
+        white-space: nowrap;
+        line-height: 1.5;
+    }
+
+    .lala-toggle-container ul {
+        margin: 0;
+        font-size: 14px;
+        list-style: none;
+        padding-left: 20px;
+    }
+
+    .lala-toggle-trigger {
+        display: none;
+    }
+
+    .lala-toggle-btn {
+        color: #999;
+        display: inline-block;
+        height: 10px;
+        width: 10px;
+        position: relative;
+        cursor: pointer;
+        vertical-align: center;
+        user-select: none;
+    }
+
+    .lala-toggle-btn::after {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAAXNSR0IArs4c6QAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABJ0AAASdAHeZh94AAACdGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KICAgICAgICAgPHRpZmY6WVJlc29sdXRpb24+MTIwPC90aWZmOllSZXNvbHV0aW9uPgogICAgICAgICA8dGlmZjpDb21wcmVzc2lvbj41PC90aWZmOkNvbXByZXNzaW9uPgogICAgICAgICA8dGlmZjpYUmVzb2x1dGlvbj4xMjA8L3RpZmY6WFJlc29sdXRpb24+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+Rmx5aW5nIE1lYXQgQWNvcm4gNi4wLjE8L3htcDpDcmVhdG9yVG9vbD4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMTgtMDMtMTdUMTI6MDY6Mzk8L3htcDpNb2RpZnlEYXRlPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KtYOxSwAAAGxJREFUGBljZACCrnn7/4NofKAsyZGREaYwyE4Wp9p1hx6D5ZhAJLrCxKIFYEkYAZMHK4YJEqJJUswCMw3damT+/L4EsDK4YpgASBSkEJkPVgkkSHIG6Yph4QizDpsTQHKMIAIWMSA2LgCKQQBG3B2rZ6fFewAAAABJRU5ErkJggg==')
+    }
+
+    .lala-toggle-trigger:checked~.lala-toggle-btn::after {
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAAAXNSR0IArs4c6QAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAACXBIWXMAABJ0AAASdAHeZh94AAACdGlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgICAgICAgICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KICAgICAgICAgPHRpZmY6WVJlc29sdXRpb24+MTIwPC90aWZmOllSZXNvbHV0aW9uPgogICAgICAgICA8dGlmZjpDb21wcmVzc2lvbj41PC90aWZmOkNvbXByZXNzaW9uPgogICAgICAgICA8dGlmZjpYUmVzb2x1dGlvbj4xMjA8L3RpZmY6WFJlc29sdXRpb24+CiAgICAgICAgIDx4bXA6Q3JlYXRvclRvb2w+Rmx5aW5nIE1lYXQgQWNvcm4gNi4wLjE8L3htcDpDcmVhdG9yVG9vbD4KICAgICAgICAgPHhtcDpNb2RpZnlEYXRlPjIwMTgtMDMtMTdUMTI6MDM6MDA8L3htcDpNb2RpZnlEYXRlPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4K7T8d7gAAAGJJREFUGBljZACCrnn7/4NofKAsyZGREaYwyE4Wp9p1hx6D5ZhAJD6FyPJgxWBtRBAkKWaBGZhYtADGxKDn9yWAxeCKYQIYKpEESHIG6Yph4YhkI1YmI0gUFjFYVUAFQTEIAPXJFjjYfQ23AAAAAElFTkSuQmCC');
+    }
+
+    .lala-toggle-trigger:not(:checked)~.lala-toggle-content {
+        display: none;
+    }
+
+    /* ----------------------------------------------------------- */
+
+    .toggle-wrapper {
+        position: relative;
+        margin-left: 15px;
+    }
+
+    .detial-title {
+        font-size: 14px;
+    }
+</style>
+
+
+
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="layui-icon">&#xe62d;</i>关系链报表</h2>
+            </header>
+            <hr>
+            <div class="demoTable">
+                开始时间：
+                <div class="layui-inline">
+                    <input class="layui-input" name="start" id="start" autocomplete="on" onclick="layui.laydate({elem: this,min:laydate.now()-30,festival: true})">
+                </div>
+                结束时间：
+                <div class="layui-inline">
+                    <input class="layui-input" name="end" id="end" autocomplete="on" onclick="layui.laydate({elem: this,min:laydate.now()-30,festival: true})">
+                </div>
+                <button class="layui-btn" data-type="reload">搜索</button>
+            </div>
+
+        </section>
+
+
+
+
+        <table id='lala' class="lala-table">
+            <tr class="blue-row">
+                <th>上游/收款人</th>
+                <th>上游金额</th>
+                <th>贴现户/出票户/质押户/授信主体</th>
+                <th>下游金额</th>
+                <th>下游/背书</th>
+            </tr>
+
+            <foreach name="data" item="vo1" key="item">
+            <tr>
+                <td>{$vo1.shangyou_name}</td>
+                <td>
+                    <div class="lala-toggle-container">
+                        <input class='lala-toggle-trigger' type="checkbox">
+                        <if condition="$vo1.shangyou_all_amount gt 0 "><label class='lala-toggle-btn'></label></if>
+                        <span>{$vo1.shangyou_all_amount}</span>
+
+                        <foreach name="vo1.shangyou_data" item="vo2" key="key2">
+                        <div class="lala-toggle-content toggle-wrapper">
+                            <div class="lala-toggle-container">
+                                <input class='lala-toggle-trigger' type="checkbox">
+                                <label class='lala-toggle-btn'></label>
+                                <span class=detial-title>{$vo2.category} {$vo2.amount}</span>
+                                <ul class="lala-toggle-content">
+                                    <li>{$vo2.time|date='Y-m-d',###} {$vo2.amount}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        </foreach>
+                    </div>
+                </td>
+                <!-- rowspan 填总共有多少列 -->
+                <if condition="$item eq 0">
+                <td class="blue-block" rowspan="{$all_rows}">{$c_name}</td>
+                </if>
+                <td>
+                    <div class="lala-toggle-container">
+                        <input class='lala-toggle-trigger' type="checkbox">
+                        <if condition="$vo1.xiayou_all_amount gt 0 "><label class='lala-toggle-btn'></label></if>
+                        <span>{$vo1.xiayou_all_amount}</span>
+
+                        <foreach name="vo1.xiayou_data" item="vo2" key="key2">
+                        <div class="lala-toggle-content toggle-wrapper">
+                            <div class="lala-toggle-container">
+                                <input class='lala-toggle-trigger' type="checkbox">
+                                <label class='lala-toggle-btn'></label>
+                                <span class=detial-title>{$vo2.category} {$vo2.amount}</span>
+                                <ul class="lala-toggle-content">
+                                    <li>{$vo2.time|date='Y-m-d',###} {$vo2.amount}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        </foreach>
+                    </div>
+                </td>
+                <td>{$vo1.xiayou_name}</td>
+            </tr>
+
+            </foreach>
+
+
+
+            <tr class="blue-row">
+                <td></td>
+                <td>{$all_shang}</td>
+                <td></td>
+                <td>{$all_xia}</td>
+                <td></td>
+            </tr>
+        </table>
+
+
+
+    </div>
+</main>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+
+
+    var postCompanyUrl  = '/index.php/Admin/setting/addRelation';
+
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+        form.verify({});
+
+
+        var new_shangyou = [];
+        var new_xiayou = [];
+        var res = '{$res.id}';
+
+        //监听提交
+        form.on('submit(demo2)', function(data){
+            new_shangyou.splice(0,new_shangyou.length);
+            new_xiayou.splice(0,new_xiayou.length);
+            $("input[name='shangyou']:checked").each(function (index,obj) {
+                new_shangyou.push(obj.value);
+            });
+
+            $("input[name='xiayou']:checked").each(function (index,obj) {
+                new_xiayou.push(obj.value);
+            });
+
+            if(isEmpty(new_shangyou)  &&  isEmpty(new_shangyou)){
+                layer.msg('请选择该企业上下游关系链');
+            }
+//            if(data.field.users == 0){
+//                layer.msg('请选择企业负责人',{icon:5,shift:6});
+//                return false;
+//            }
+            postData(postCompanyUrl,new_shangyou,res,new_xiayou)
+        });
+    });
+
+
+    function postData(postDataUrl,new_shangyou,res,new_xiayou) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: postDataUrl,
+            data: { shangyou: new_shangyou,res: res,xiayou:new_xiayou},
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200) {
+                    layer.msg(data.msg, {icon: 6},function () {
+                        location.href = '/index.php/Admin/setting/addRelation/id/'+res;
+                    });
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        })
+    }
+
+
+    function isEmpty(value) {
+        return (Array.isArray(value) && value.length === 0) || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0);
+    }
+
+
+    function prevInput(el) {
+        return el.previousElementSibling
+    }
+    function bindEvent() {
+        const $input = prevInput(this)
+        $input.checked = !$input.checked
+    }
+    for (const $label of document.querySelectorAll('label.lala-toggle-btn')) {
+        $label.addEventListener('click', bindEvent, false)
+    }
+
+
+</script>
+
+<include file="Public/ft" />

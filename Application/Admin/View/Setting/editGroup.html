@@ -1,0 +1,108 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="icon-edit"></i>编辑分组</h2>
+            </header>
+            <hr>
+        </section>
+
+        <form class="layui-form layui-form-pane" action="">
+
+
+            <div class="layui-form-item" id="select3">
+                <label class="layui-form-label">所属部门</label>
+                <div class="layui-input-inline">
+                    <select name="department"  id="department" lay-filter="users">
+                        <option value="{$groupRes.did}">{$groupRes.department_name}</option>
+                        <foreach name="department" item="vo" >
+                            <option value="{$vo.id}">{$vo.department}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">组名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="group" lay-verify="required"  value="{$groupRes.group_name}" utocomplete="off" class="layui-input">
+                    <input type="hidden" name="id" value="{$groupRes.id}">
+                </div>
+            </div>
+
+
+
+            <div class="layui-form-item">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo2">提交</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+
+    var postGroupLeader  = '/index.php/Admin/setting/ajaxEditGroupLeader';
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+        form.verify({});
+
+
+        //监听提交
+        form.on('submit(demo2)', function(data){
+            if(data.field.department == 0) {
+                layer.msg('请选择所属部门',{icon:5,shift:6});
+                return false;
+            }
+            if(data.field.group == '{$groupRes.group_name}'){
+                layer.msg('未做修改请勿提交',{icon:5,shift:6});
+                return false;
+            }
+            postData(postGroupLeader,data)
+        });
+    });
+
+
+
+    function postData(postDataUrl,Data) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: postDataUrl,
+            data:Data.field,
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200) {
+                    layer.msg(data.msg, {icon: 6},function () {
+                        location.href = '/index.php/Admin/setting/groupslist';
+                    });
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        })
+    }
+
+
+</script>
+
+<include file="Public/ft" />

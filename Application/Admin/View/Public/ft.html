@@ -1,0 +1,99 @@
+<footer class="btm-ft">
+	<p class="clear">
+		<!--<span class="fl">©Copyright 2017 &lt;!&ndash;<a href="javascript:void(0);" title="宝筹金融" target="_blank">宝筹金融</a>&ndash;&gt;</span>-->
+		<span class="fr text-info">
+					<em class="uppercase">
+						<i class="icon-user"></i>
+						author:fedde.Qin
+					</em>
+					<!--|-->
+					<!--<em class="uppercase"><i class="icon-envelope-alt"></i>-->
+
+					<!--</em>-->
+					<!--<a onclick="reciprocate()" class="text-primary"><i class="icon-qrcode"></i>捐赠</a>-->
+				</span>
+	</p>
+</footer>
+</div>
+</div>
+
+<script type="text/javascript">
+    //安全退出
+    $('#JsSignOut').click(function(index){
+        var signUrl = '/index.php/Admin/index/signout';
+        var btnConfirm = layer.confirm('确定登出管理系统？', {
+            title:'系统提示',
+            btn: ['确定','取消']
+        }, function(){
+            layer.close(btnConfirm);
+            signOut(signUrl);
+        });
+    });
+
+    function signOut(Url) {
+        var index      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: Url,
+            dataType: "json",
+			timeout:20000,
+            success: function(data){
+                layer.close(index);
+                if(data.code == 200){
+                    layer.msg(data.msg,function () {
+                       location.href = 'http://www.sebation.com';
+                    });
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        });
+    }
+
+
+
+    $('#delCache').click(function(){
+        var cacheUrl = '/index.php/Admin/index/delcache';
+        var btnConfirm = layer.confirm('确定清除后台缓存吗？', {
+            title:'系统提示',
+            btn: ['确定','取消']
+        }, function(){
+            layer.close(btnConfirm);
+            delCache(cacheUrl);
+        });
+    });
+
+    function delCache(Url) {
+        var index      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: Url,
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(index);
+                if(data.code == 200){
+                    var message = data.msg+"成功 "+data.success+" 个，失败 "+data.fail+" 个";
+                    layer.msg(message,{icon:6});
+                }else{
+                    layer.msg('删除缓存失败',{icon:5});
+				}
+            },
+            error:function (XMLHttpRequest, Status) {
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        });
+    }
+
+</script>
+
+
+</body>
+</html>

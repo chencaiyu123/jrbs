@@ -1,0 +1,202 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="icon-user"></i>修改个人信息</h2>
+            </header>
+            <hr>
+        </section>
+
+        <form class="layui-form layui-form-pane" action="">
+            <!--<div class="layui-form-item">-->
+            <!--<label class="layui-form-label">长输入框</label>-->
+            <!--<div class="layui-input-block">-->
+            <!--<input type="text" name="title" autocomplete="off" placeholder="请输入标题" class="layui-input">-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户账号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="username"  placeholder="{$userInfo.username}"  readonly= 'readonly' autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name"  placeholder="{$userInfo.name}"  readonly= 'readonly' autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">移动电话</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="phone"  autocomplete="off"  placeholder="请输入移动电话" value="{$userInfo.phone}" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">企业微信</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="companywechat" placeholder="{$userInfo.wechat}" readonly= 'readonly'  autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">EMAIL</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="email"  placeholder="请输入EMAIL"  value="{$userInfo.email}" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">职位</label>
+                <div class="layui-input-block">
+                    <if condition="$userInfo.is_salas eq 1">
+                    <input type="checkbox" name="position[salas]" id="salas"   title="业务" lay-filter="identity" checked=""><div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin=""><span>业务</span><i class="layui-icon"></i></div>
+                    <elseif condition="$userInfo.is_finance eq 1"/>
+                    <input type="checkbox" name="position[finance]"  id="finance" title="财务"  lay-filter="identity" checked=""><div class="layui-unselect layui-form-checkbox layui-form-checked" lay-skin=""><span>财务</span><i class="layui-icon"></i></div>
+                    </if>
+                </div>
+            </div>
+
+            <div class="layui-form-item"  id="select3">
+                <label class="layui-form-label">所属分组</label>
+                <div class="layui-input-inline">
+                    <select name="group"  id="group" lay-filter="group" disabled>
+                        <if condition="$userInfo.group gt 0">
+                        <option value="$group.id">{$group.group_name}</option>
+                        <else/>
+                        <option value="">没有所属的组</option>
+                        </if>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">所属公司</label>
+                <div class="layui-input-inline" id="select1">
+                    <select name="company"  id="company" lay-filter="company" disabled>
+                        <if condition="$userInfo.cid gt 0">
+                        <option value="$company.id">{$company.company}</option>
+                        <else/>
+                        <option value="">没有所属的公司</option>
+                        </if>
+                    </select>
+                </div>
+                <div class="layui-input-inline"   id="select2">
+                    <select name="department" id="department" disabled>
+                        <if condition="$userInfo.did gt 0">
+                        <option value="$department.id">{$department.department}</option>
+                        <else/>
+                        <option value="">没有所属的部</option>
+                        </if>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo2">提交</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+    var postDataUrl      = '/index.php/Admin/Acount/update';
+
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+        //监听指定开关
+        form.on('switch(switchTest)', function(data){
+
+            layer.msg('开关checked：'+ (this.checked ? 'true' : 'false'), {
+                offset: '6px'
+            });
+            layer.tips('温馨提示：请注意开关状态的文字可以随意定义，而不仅仅是ON|OFF', data.othis)
+        });
+
+        form.on('checkbox(identity)',function (data) {
+            var id = $(this).attr('id');
+            if(id == 'salas'){
+                $('#finance').prop('checked',false);
+                $('#salas').prop('checked',true);
+//                $('#identity').val('salas');
+            }else{
+                $('#salas').prop('checked',false);
+                $('#finance').prop('checked',true);
+//                $('#identity').val('finance');
+            }
+            form.render();
+        })
+
+
+        //监听提交
+        form.on('submit(demo2)', function(data){
+            if(data.field.phone == '{$userInfo.phone}'   &&  data.field.email == '{$userInfo.email}'){
+                layer.msg('未做修改请勿提交',{icon:5,shift:6});
+                return false;
+            }
+            postData(postDataUrl,data);
+        });
+    });
+
+
+    function postData(postDataUrl,Data) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: postDataUrl,
+            data:Data.field,
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200) {
+                    layer.msg(data.msg, {icon: 6},function () {
+                        location.href = location.href;
+                    });
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        })
+    }
+
+
+    /**
+     * 判断是否为中文
+     * @param str
+     * @returns {boolean}
+     */
+    function isChn(str){
+        var reg = /^[\u4E00-\u9FA5]+$/;
+        if(!reg.test(str)){return false;}
+        return true;
+    }
+</script>
+
+<include file="Public/ft" />

@@ -1,0 +1,268 @@
+<div class="main-wrap">
+	<div class="side-nav">
+		<div class="side-logo">
+			<div class="logo">
+				<span class="logo-ico">
+					<i class="i-l-1"></i>
+					<i class="i-l-2"></i>
+					<i class="i-l-3"></i>
+				</span>
+				<strong>{:C(VAR_TITLE)}</strong>
+			</div>
+		</div>
+
+		<nav class="side-menu content mCustomScrollbar" data-mcs-theme="minimal-dark">
+			<!--<h2>-->
+				<!--<a href="/index.php/Admin/main/index" class="InitialPage"><i class="icon-dashboard"></i>数据概况</a>-->
+			<!--</h2>-->
+			<ul>
+
+				{//报单}
+				<?php if ($Think.CONTROLLER_NAME == 'Forms'){?>
+				<li class="open">
+				<?php } else {?>
+				<li>
+				<?php }?>
+
+					<dl>
+						<dt>
+							<i class="icon-columns"></i>报单<i class="icon-angle-right"></i>
+						</dt>
+						<dd>
+							<a href="/index.php/Admin/forms/formsList">报单列表</a>
+						</dd>
+						<dd>
+							<a href="/index.php/Admin/forms/add">添加报单</a>
+						</dd>
+					</dl>
+				</li>
+
+
+				{//票据池}
+				<?php if ($Think.CONTROLLER_NAME == 'Voucherpool'){?>
+				<li class="open">
+					<?php } else {?>
+				<li>
+					<?php }?>
+
+					<dl>
+						<dt>
+							<i class="icon-list"></i>票据池<i class="icon-angle-right"></i>
+						</dt>
+						<dd>
+							<a href="/index.php/Admin/voucherpool/lists">票据池</a>
+						</dd>
+					</dl>
+				</li>
+
+
+				{//授信材料}
+				<?php if ($Think.CONTROLLER_NAME == 'Credit'){?>
+				<li class="open">
+					<?php } else {?>
+				<li>
+					<?php }?>
+
+					<dl>
+						<dt>
+							<i class="icon-file"></i>授信<i class="icon-angle-right"></i>
+						</dt>
+						<dd>
+							<a href="/index.php/Admin/Credit/index">授信</a>
+						</dd>
+					</dl>
+				</li>
+				<!--<li>-->
+					<!--<dl>-->
+						<!--<dt>-->
+							<!--&lt;!&ndash;<i class="icon-list-alt"></i>发票管理<i class="icon-angle-right"></i>&ndash;&gt;-->
+						<!--</dt>-->
+						<!--<dd>-->
+							<!--<a href="/index.php/Admin/invoice/invoicelist">发票列表</a>-->
+						<!--</dd>-->
+					<!--</dl>-->
+				<!--</li>-->
+
+				<!--<li>-->
+					<!--<dl>-->
+						<!--<dt>-->
+							<!--&lt;!&ndash;<i class="icon-columns"></i>授信<i class="icon-angle-right"></i>&ndash;&gt;-->
+						<!--</dt>-->
+						<!--<dd>-->
+							<!--<a href="paging.html">授信</a>-->
+						<!--</dd>-->
+					<!--</dl>-->
+				<!--</li>-->
+
+
+
+				<!--<li>-->
+					<!--<dl>-->
+						<!--<dt>-->
+							<!--<i class="icon-spinner"></i>银行业务<i class="icon-angle-right"></i>-->
+						<!--</dt>-->
+						<!--<dd>-->
+							<!--<a href=" /index.php/Admin/bankservices/inedex">银行业务</a>-->
+						<!--</dd>-->
+					<!--</dl>-->
+				<!--</li>-->
+
+
+
+				<if condition="$Think.session.auth eq admin">
+
+				<?php if ($Think.CONTROLLER_NAME == 'Setting'){?>
+				<li class="open">
+					<?php } else {?>
+				<li>
+					<?php }?>
+
+					<dl>
+						<dt>
+							<i class="layui-icon"></i>设置<i class="icon-angle-right"></i>
+						</dt>
+						<?php if ((strtolower($Think.ACTION_NAME) == 'adduser') OR (strtolower($Think.ACTION_NAME) == 'userslist')){?>
+						<dd class="openChild">
+							<?php } else {?>
+						<dd>
+						<?php }?>
+							<a class="child">用户设置</a>
+							<ul>
+								<li><a href="/index.php/Admin/setting/addUser">添加用户</a></li>
+								<li><a href="/index.php/Admin/setting/usersList">用户列表</a></li>
+							</ul>
+						</dd>
+
+						<?php if ((strtolower($Think.ACTION_NAME) == 'addgroup') OR (strtolower($Think.ACTION_NAME) == 'groupslist')){?>
+						<dd class="openChild">
+							<?php } else {?>
+						<dd>
+							<?php }?>
+							<a class="child">组设置</a>
+							<ul>
+								<li><a href="/index.php/Admin/setting/addGroup">添加组</a></li>
+								<li><a href="/index.php/Admin/setting/groupslist">组列表</a></li>
+							</ul>
+						</dd>
+
+						<?php if ((strtolower($Think.ACTION_NAME) == 'addcompany') OR (strtolower($Think.ACTION_NAME) == 'companyslist')){?>
+						<dd class="openChild">
+							<?php } else {?>
+						<dd>
+							<?php }?>
+							<a class="child">企业设置</a>
+							<ul>
+								<li><a href="/index.php/Admin/setting/addCompany">添加企业</a></li>
+								<li><a href="/index.php/Admin/setting/companyslist">企业列表</a></li>
+							</ul>
+						</dd>
+
+						<?php if ((strtolower($Think.ACTION_NAME) == 'adddepartment') OR (strtolower($Think.ACTION_NAME) == 'departmentslist')){?>
+						<dd class="openChild">
+							<?php } else {?>
+						<dd>
+							<?php }?>
+							<a class="child">部门设置</a>
+							<ul>
+								<li><a href="/index.php/Admin/setting/addDepartment">添加部门</a></li>
+								<li><a href="/index.php/Admin/setting/departmentslist">部门列表</a></li>
+							</ul>
+						</dd>
+
+						<?php if ((strtolower($Think.ACTION_NAME) == 'addcategory') OR (strtolower($Think.ACTION_NAME) == 'categorylist')){?>
+						<dd class="openChild">
+							<?php } else {?>
+						<dd>
+							<?php }?>
+							<a class="child">分类设置</a>
+							<ul>
+								<li><a href="/index.php/Admin/setting/addCategory">添加分类</a></li>
+								<li><a href="/index.php/Admin/setting/categorylist">分类列表</a></li>
+							</ul>
+						</dd>
+
+						<?php if ((strtolower($Think.ACTION_NAME) == 'addadmin') OR (strtolower($Think.ACTION_NAME) == 'adminslist')){?>
+						<dd class="openChild">
+							<?php } else {?>
+						<dd>
+							<?php }?>
+							<a class="child">管理员设置</a>
+							<ul>
+								<li><a href="/index.php/Admin/setting/addAdmin">添加管理员</a></li>
+								<li><a href="/index.php/Admin/setting/adminslist">管理员列表</a></li>
+							</ul>
+						</dd>
+
+					</dl>
+				</dd>
+
+				<?php if ($Think.CONTROLLER_NAME == 'Acount'){?>
+				<li class="open">
+					<?php } else {?>
+				<li>
+					<?php }?>
+
+					<dl>
+						<dt>
+							<i class="icon-user"></i>管理员中心<i class="icon-angle-right"></i>
+						</dt>
+						<!--<dd>-->
+							<!--<a href=" /index.php/Admin/acount/userinfo">修改管理员信息</a>-->
+						<!--</dd>-->
+						<dd>
+							<a href=" /index.php/Admin/acount/password">修改密码</a>
+						</dd>
+					</dl>
+				</li>
+
+				<else/>
+
+				<?php if ($Think.CONTROLLER_NAME == 'Acount'){?>
+				<li class="open">
+					<?php } else {?>
+				<li>
+					<?php }?>
+
+					<dl>
+						<dt>
+							<i class="icon-user"></i>用户中心<i class="icon-angle-right"></i>
+						</dt>
+						<dd>
+							<a href=" /index.php/Admin/acount/userinfo">修改个人信息</a>
+						</dd>
+						<dd>
+							<a href=" /index.php/Admin/acount/password">修改密码</a>
+						</dd>
+					</dl>
+				</li>
+
+				</if>
+			</ul>
+		</nav>
+		<footer class="side-footer">© 宝筹金融 版权所有</footer>
+	</div>
+	<div class="content-wrap">
+		<header class="top-hd">
+			<div class="hd-lt">
+				<a class="icon-reorder"></a>
+			</div>
+			<div class="hd-rt">
+				<ul>
+					<li>
+						<!--<a href="#" target="_blank"><i class="icon-home"></i>访问OA系统</a>-->
+					</li>
+					<li>
+						<a href="javascript:void(0)" id="delCache"><i class="icon-random"></i>清除缓存</a>
+					</li>
+					<li>
+						<a><i class="icon-user"></i> <if condition="($Think.session.userInfo.is_salas eq 1)">业务员：<elseif condition="($Think.session.userInfo.is_finance eq 1)"/>财务：</if> <em>{$Think.session.userInfo.name}</em></a>
+					</li>
+					<li>
+						<a><i class="icon-bell-alt"></i>系统消息</a>
+					</li>
+					<li>
+						<a href="javascript:void(0)" id="JsSignOut"><i class="icon-signout"></i>安全退出</a>
+					</li>
+				</ul>
+			</div>
+		</header>

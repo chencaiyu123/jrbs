@@ -1,0 +1,124 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="icon-user-md"></i>指派分组负责人</h2>
+            </header>
+            <hr>
+        </section>
+
+        <form class="layui-form layui-form-pane" action="">
+
+
+            <div class="layui-form-item" id="select2">
+                <label class="layui-form-label">所属部门</label>
+                <div class="layui-input-inline">
+                    <select name="department"  id="department" lay-filter="department"  disabled>
+                    <if condition="$group.did gt 0">
+                        <option value="{$group.did}">{$group.department}</option>
+                        <else/>
+                        <option value="0">未所属部门</option>
+                    </if>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">分组名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="group" lay-verify="required"  value="{$group.group_name}" readonly="readonly" autocomplete="off" class="layui-input">
+                    <input type="hidden" name="id" value="{$group.id}">
+                </div>
+            </div>
+
+            <div class="layui-form-item" id="select3">
+                <label class="layui-form-label">负责人</label>
+                <div class="layui-input-inline">
+                    <select name="users"  id="users" lay-filter="users">
+
+                        <if condition="$group.group_leader gt 0">
+                            <option value="{$group.group_leader}">{$group.user_name}</option>
+                            <else/>
+                            <option value="0">请选择负责人</option>
+                        </if>
+                        <option value="{$users.id}">{$users.name}</option>
+                        <foreach name="users" item="vo" >
+                            <option value="{$vo.id}">{$vo.name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo2">提交</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+
+    var postGroupLeader  = '/index.php/Admin/setting/ajaxEditGroupLeader';
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+        form.verify({});
+
+
+        //监听提交
+        form.on('submit(demo2)', function(data){
+            data.field.old_group_leader = '{$group.group_leader}';
+            if(data.field.old_group_leader == data.field.users){
+                layer.msg('负责人未做修改',{icon:5,shift:6});
+                return false;
+            }
+
+            postData(postGroupLeader,data)
+        });
+    });
+
+
+
+    function postData(postDataUrl,Data) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: postDataUrl,
+            data:Data.field,
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200) {
+                    layer.msg(data.msg, {icon: 6},function () {
+                        location.href = '/index.php/Admin/setting/groupslist';
+                    });
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        })
+    }
+
+
+</script>
+
+<include file="Public/ft" />

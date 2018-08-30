@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>{:C(VAR_TITLE)}</title>
+<meta name="keywords"  content="" />
+<meta name="description" content="" />
+<meta name="author" content="fedde.Qin" />
+<meta name="renderer" content="">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<link rel="icon" href="__IMAGE__/icon/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="__CSS__/style.css" />
+<link rel="stylesheet" type="text/css" href="__CSS__/dataTables.min.css" />
+<link rel="stylesheet" type="text/css" href="__JS__/layui-1.0.9/css/layui.css" />
+
+    <!--<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">-->
+    <!--<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/plug-ins/28e7751dbec/integration/jqueryui/dataTables.jqueryui.css">-->
+
+    <!--<script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>-->
+    <!--<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10-dev/js/jquery.dataTables.min.js"></script>-->
+    <!--<script type="text/javascript" language="javascript" src="http://cdn.datatables.net/plug-ins/28e7751dbec/integration/jqueryui/dataTables.jqueryui.js"></script>-->
+
+
+
+
+
+<script src="__JS__/jquery.js"></script>
+<script src="__JS__/plug-ins/customScrollbar.min.js"></script>
+<script src="__JS__/plug-ins/echarts.min.js"></script>
+<script src="__JS__/plug-ins/layerUi/layer.js"></script>
+<script src="__EDITOR__/ueditor.config.js"></script>
+<script src="__EDITOR__/ueditor.all.js"></script>
+<script src="__JS__//plug-ins/pagination.js"></script>
+<script src="__JS__/public.js"></script>
+<script src="__JS__/layui-1.0.9/layui.js"></script>
+<script src="__JS__/dataTables.min.js"></script>
+</head>
+<body>
+
+<script>
+    $(document).ready(function(){
+        var index      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        setTimeout(checkLogin(index),5000);
+    });
+    
+    
+    function checkLogin(index) {
+        var user        ='{$Think.session.userInfo.username}';
+        var loginUrl    = '{$loginUrl}';
+        if(!user){
+            layer.msg('登录信息失效，请重新登录',{icon:2});
+            location.href = '/index.php/Admin/index/index';
+        }
+        $.ajax({
+            type: "POST",
+            timeout:20000,
+            url: loginUrl,
+            data: {user:user},
+            dataType: "json",
+            success: function(data){
+                layer.close(index);
+                if(data.code == 201){
+                    layer.msg(data.msg,function () {
+                        location.href = 'http://www.bankyp.com';
+                    });
+                }else if(data.code == 202){
+                    layer.msg(data.msg,function () {
+                        location.href = 'http://www.bankyp.com';
+                    });
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        });
+    }
+</script>

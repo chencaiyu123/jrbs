@@ -1,0 +1,708 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+<style>
+    .layui-form-label{width:110px;}
+</style>
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="icon-columns"></i>报单列表</h2>
+            </header>
+            <hr>
+        </section>
+
+
+        <form class="layui-form" action="" method="post">
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">票号后六位</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="piaohao" id="piaohao" lay-verify="required|piaohao|number" autocomplete="off" placeholder="请输入票后后六位" class="layui-input">
+                    </div>
+
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">承兑行</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="bank" id="bank" lay-verify="required|ischn" autocomplete="off" placeholder="请输入承兑行" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">票面金额</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="amount"  id="amount" lay-verify="required|number" autocomplete="off"  placeholder="请输入票面金额 (万元)" class="layui-input" onblur="if(this.value>500){$('#dakuanfei').show();}else{$('#dakuanfei').hide(); $('#dakuanfei').val('');}">
+                    </div>
+                    <div class="layui-form-mid layui-word-aux">万元</div>
+                </div>
+                <!--<div class="layui-inline">-->
+                    <!--<label class="layui-form-label">验证日期</label>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<input type="text" name="date" id="date" lay-verify="date" placeholder="yyyy-mm-dd" autocomplete="off" class="layui-input" onclick="layui.laydate({elem: this})">-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="layui-inline">-->
+                    <!--<label class="layui-form-label">验证链接</label>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<input type="tel" name="url" lay-verify="url" autocomplete="off" class="layui-input">-->
+                    <!--</div>-->
+                <!--</div>-->
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                <label class="layui-form-label">交易日期</label>
+                <div class="layui-input-inline">
+                <input type="text" name="starttime" id="starttime" lay-verify="required|date"   readonly='readonly' placeholder="yyyy-mm-dd" autocomplete="off" class="layui-input" onclick="layui.laydate({elem: this,min:laydate.now(),festival: true,choose: function(datas){ if($('#endtime').val() && $('#day').val()){changday()}; }})">
+                </div>
+                </div>
+
+                <div class="layui-inline">
+                <label class="layui-form-label">票到日期</label>
+                <div class="layui-input-inline">
+                <input type="text" name="endtime" id="endtime" lay-verify="required|date"   readonly='readonly' placeholder="yyyy-mm-dd" autocomplete="off" class="layui-input" onclick="layui.laydate({elem: this,min:laydate.now(), festival: true,choose: function(datas){if(datas){checkday(datas)}; if($('#day').val()){changday()}}})" >
+                </div>
+                    <div class="layui-form-mid layui-word-aux" id="xingqiji"></div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">调整天数</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="day" id="day" lay-verify="required|number" placeholder="调整天数 (天)" autocomplete="off" class="layui-input" onblur="changday()">
+                    <input type="hidden" name="shengyutianshu" id="shengyutianshu" value=""/>
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="allday">实际贴现0天</div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">年利率</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="money_rate" id="money_rate" lay-verify="required" placeholder="年利率 (%)" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" id="baifenhao">%</div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">公司加价</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="markup" id="markup" lay-verify="required" autocomplete="off" placeholder="公司加价" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">调价</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="modify_price" id="modify_price" lay-verify="required" autocomplete="off" placeholder="调价" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="btn btn-info-outline radius" onclick="count(1);">计算</button>
+                    <button type="button" class="btn btn-danger-outline radius" onclick="setempty();">重置</button>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">公司报价</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="gongsibaojia"  id="gongsibaojia" autocomplete="off"  readonly="readonly"  class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">终端价格</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="zhongjiefei" id="zhongjiefei" placeholder="输入终端价格" autocomplete="off" class="layui-input" onblur="showxiaokuan(this.value);zhongduanbaojia(this.value,1)" >
+                        </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="display: none" id="dakuanfei">
+                <div class="layui-inline">
+                    <label class="layui-form-label">打款费</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="dapiaodakuanfei" id="dapiaodakuanjine"    autocomplete="off" placeholder="打款费从大款扣除" class="layui-input" onblur="checkdakuanfei(this.value)">
+                        <input type="text" name="xiaopiaodakuanfei" id="xiaopiaodakuanjine" autocomplete="off" placeholder="打款费从小款扣除" class="layui-input" style="display: none" onblur="checkdakuanfei(this.value)">
+                        <input type="hidden" name="selectdakuanfei" id="selectdakuanfei" value="1">
+                    </div>
+                </div>
+                <div class="layui-inline"  style="display: none" id="xiaokuan3">
+                    <label class="layui-form-label">从小款扣</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="close" lay-skin="switch" lay-filter="switchTest" lay-text="ON|OFF" id="check">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">大款票款</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="piaokuan" id="piaokuan" readonly="readonly" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline" style="display: none" id="xiaokuan">
+                    <label class="layui-form-label">小款</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="xiaokuan" id="xiaokuantext" readonly="readonly" autocomplete="off" placeholder="" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">大款账号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="dakuanzhanghao" id="dakuanzhanghao" lay-verify="required" autocomplete="off" placeholder="请输入大款账号" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">开户行</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="bankname" lay-verify="required|ischn" autocomplete="off" placeholder="请输入大款开户行" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">大款客户</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="dakuankehu" lay-verify="required|ischn" autocomplete="off" placeholder="大款客户姓名" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">客户手机</label>
+                    <div class="layui-input-inline">
+                        <input type="tel" name="kehushouji" lay-verify="required|phone" autocomplete="off" placeholder="客户手机号" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">大款行号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="hanghao" lay-verify="required|required" autocomplete="off" placeholder="大款行号" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item" id="xiaokuan1" style="display: none">
+                <div class="layui-inline">
+                    <label class="layui-form-label">小款账号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="xiaokuanzhanghao" id="xiaokuanzhanghao" autocomplete="off" placeholder="请输入小款账号" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">小款开户行</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="xiaokuankaihuhang"  autocomplete="off" placeholder="请输入小款开户行" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item" id="xiaokuan2" style="display: none">
+                <div class="layui-inline">
+                    <label class="layui-form-label">小款客户</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="xiaokuankehuxingming" autocomplete="off" placeholder="小款客户姓名" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">客户手机号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="xiaokuankehushouji" autocomplete="off" placeholder="客户手机号" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">票源备注</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="beizhu" autocomplete="off" placeholder="票源备注" class="layui-input">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="other" autocomplete="off" placeholder="" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="button" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+</main>
+<!--------------------------------------------------------------------------------------------------------------------->
+<script>
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+        //自定义验证规则
+        form.verify({
+            piaohao: function(value){
+                if(value.length < 6 || value.length > 6){
+                    return '输入票号后六位';
+                }
+            },
+            ischn:function (value) {
+                if(!isChn(value)){
+                    return '输入中文';
+                }
+            }
+        });
+
+
+        //监听指定开关
+        form.on('switch(switchTest)', function(data){
+            if(this.checked){
+                $('#dapiaodakuanjine').hide();
+                $('#xiaopiaodakuanjine').show();
+                $('#dapiaodakuanjine').val('');
+//                layer.msg('打款费从小款扣除', {
+//                    offset: '6px'
+//                });
+                count(1);
+                $('#selectdakuanfei').val(2);
+                layer.tips('打款费从小款扣除', data.othis)
+            }else{
+                $('#dapiaodakuanjine').show();
+                $('#xiaopiaodakuanjine').hide();
+                $('#xiaopiaodakuanjine').val('');
+//                layer.msg('打款费从大款扣除', {
+//                    offset: '6px'
+//                });
+                var zhongjiefei   = $('#zhongjiefei').val();
+                zhongduanbaojia(zhongjiefei,1);
+                $('#selectdakuanfei').val(1);
+                layer.tips('打款费从大款扣除', data.othis)
+            }
+
+        });
+
+        //监听提交
+        form.on('submit(demo1)', function(data){
+            layer.alert('确定要提交这张票尾号后六位: '+JSON.stringify(parseInt(data.field.piaohao))
+                , {
+                title:'提示',
+                time: 0 //不自动关闭
+                ,btn: ['确定', '取消']
+                ,yes: function(index){
+                        layer.close(index);
+                        var postUrl = '/index.php/Admin/forms/postdata';
+                        postData(postUrl,data);
+                    }
+            });
+
+        });
+    });
+
+    /**
+     *
+     *
+     * */
+    function postData(Url,data) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: Url,
+            data:data.field,
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200){
+                    var message = data.msg;
+                    layer.msg(message,{icon:6},function () {
+                        location.href = '/index.php/Admin/Forms/formsList';
+                    })}else{
+                        layer.msg(data.msg,{icon:5});
+                    }
+                },
+            error:function (XMLHttpRequest, Status) {
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        });
+    }
+
+
+    function checkdakuanfei() {
+        var zhongjiefei   = $('#zhongjiefei').val();
+        if(zhongjiefei && zhongjiefei > 0){
+            zhongduanbaojia(zhongjiefei,0);
+        }else{count(0)}
+        var em = $('#xiaokuan3 em').text();
+        if(em == 'OFF'){
+            var dapiaodakuanjine = $('#dapiaodakuanjine').val();
+            if(dapiaodakuanjine && dapiaodakuanjine > 0){
+                var piaokuan = $('#piaokuan').val();
+                var new_piaokuan = parseFloat(piaokuan) - parseFloat(dapiaodakuanjine);
+                $('#piaokuan').val(new_piaokuan.toFixed(2));
+            }else {
+                count(1);
+            }
+
+        }else if(em =='ON'){
+           var dapiaodakuanjine = $('#xiaopiaodakuanjine').val();
+           if(dapiaodakuanjine && dapiaodakuanjine >0){
+               var xiaokuan         = $('#xiaokuantext').val();
+               var new_xiaokuan     = parseFloat(xiaokuan) - parseFloat(dapiaodakuanjine);
+               $('#xiaokuantext').val(new_xiaokuan.toFixed(2));
+           }else {
+               count(1);
+           }
+        }
+    }
+
+
+    function count(type){
+        var piaohao = $("#piaohao").val();
+        var bank    = $("#bank").val();
+        var amount  = $('#amount').val();
+        var starttime = $("#starttime").val();
+        var endtime   = $("#endtime").val();
+        var day       = $("#day").val();
+        var money_rate = $("#money_rate").val();
+        var markup    = $("#markup").val();
+        var modify_price = $("#modify_price").val();
+
+        if(!piaohao){
+            layer.msg('请输入票号后六位',{icon:5},{shift:6});
+            return false;
+        }
+        if(!checkRate(piaohao)){
+            layer.msg('请输入数字',{icon:5},{shift:6});
+            return false;
+        }
+        if(piaohao.length < 6 || piaohao.length > 6){
+            layer.msg('输入票号后六位',{icon:5},{shift:6});
+            return false;
+        }
+        if(!bank){
+            layer.msg('输入承兑行',{icon:5},{shift:6});
+            return false;
+        }
+        if(!isChn(bank)){
+            layer.msg('输入中文',{icon:5},{shift:6});
+            return false;
+        }
+        if(!amount){
+            layer.msg('输入票面金额',{icon:5},{shift:6});
+            return false;
+        }
+        if(!checkRate(amount)){
+            layer.msg('输入数字',{icon:5},{shift:6});
+            return false;
+        }
+        if(!starttime){
+            layer.msg('请选择交易日期',{icon:5},{shift:6});
+            return false;
+        }
+        if(!endtime){
+            layer.msg('请选择票到日期',{icon:5},{shift:6});
+            return false;
+        }if(!day){
+            layer.msg('请输入调整天数',{icon:5},{shift:6});
+            return false;
+        }if (!checkRate(day)){
+            layer.msg('请输入数字',{icon:5},{shift:6});
+            return false;
+        }if(!money_rate){
+            layer.msg('请输入年利率',{icon:5},{shift:6});
+            return false;
+        }if(!checkRate(money_rate)){
+            layer.msg('请输入数字',{icon:5},{shift:6});
+            return false;
+        }if(!markup){
+            layer.msg('请输入公司加价',{icon:5},{shift:6});
+            return false;
+        }if(!checkRate(markup)){
+            layer.msg('请输入数字',{icon:5},{shift:6});
+            return false;
+        }if(!modify_price){
+            layer.msg('请输入调价',{icon:5},{shift:6});
+            return false;
+        }
+//        if(!checkRate(modify_price)){
+//            layer.msg('请输入数字',{icon:5},{shift:6});
+//            return false;
+//        }
+        var allday = differDays(starttime,endtime);
+        var day  = parseInt(allday) + parseFloat(day);
+        var gongsibaojia  = countdetails(amount,markup,money_rate,modify_price,day);
+        $('#gongsibaojia').val(gongsibaojia);
+        var zhongjiefei  = $('#zhongjiefei').val();
+        if(!zhongjiefei){
+            var piaokuan = getPiaokuanjine(amount,gongsibaojia,0);
+            $("#piaokuan").val(piaokuan);
+            getxiaokuan();
+        }else {
+            var piaokuan = getPiaokuanjine(amount,gongsibaojia,zhongjiefei);
+            $("#piaokuan").val(piaokuan);
+            getxiaokuan();
+        }
+
+        if(type == 1){
+            $('#dapiaodakuanjine').val('');
+            $('#xiaopiaodakuanjine').val('');
+        }
+
+
+
+    }
+
+    function checkday(aday) {
+        var day = getWeekday(aday);
+        $('#xingqiji').html('<strong><font color="#FF0000">'+aday  +  day+'</font></strong>');
+    }
+
+
+    /**
+     * 换算实际贴现天数
+     */
+    function changday() {
+        var starttime = $("#starttime").val();
+        var endtime   = $("#endtime").val();
+        var day       = $("#day").val();
+        if(!starttime){
+            layer.msg('请选择交易日期',{icon:5},{shift:6});
+            return false;
+        }
+        if(!endtime){
+            layer.msg('请选择票到日期',{icon:5},{shift:6});
+            return false;
+        }
+        if(!day){
+            $("#allday").html('实际贴现0天')
+            layer.msg('请输入调整天数',{icon:5},{shift:6});
+            return false;
+        }if (!checkRate(day)){
+            layer.msg('请输入数字',{icon:5},{shift:6});
+            return false;
+        }
+        var allday = parseInt(differDays(starttime,endtime));
+        var day    = parseFloat(day);
+        var num = allday+day;
+        $("#allday").html('实际贴现<strong><font color="#FF0000">'+num+'</font></strong>天');
+        $('#shengyutianshu').val(num);
+        $('#shengyutianshu').val(num);
+    }
+
+
+    /**
+     * 判断是否是数字
+      * @param input
+     * @returns {boolean}
+     */
+    function checkRate(nubmer) {
+        var re = /^[0-9]+.?[0-9]*$/; //判断字符串是否为数字 //判断正整数 /^[1-9]+[0-9]*]*$/
+        if (!re.test(nubmer)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 判断是否为中文
+     * @param str
+     * @returns {boolean}
+     */
+    function isChn(str){
+        var reg = /^[\u4E00-\u9FA5]+$/;
+        if(!reg.test(str)){return false;}
+        return true;
+    }
+
+    /**
+     * 算出天数
+     * @param str1
+     * @param str2
+     * @returns {number}
+     */
+    function differDays(str1,str2)
+    {
+        var date1 = new Date(str1);
+        var date2 = new Date(str2);
+        var time1 = date1.getTime();
+        var time2 = date2.getTime();
+        var days = (time2-time1)/86400000;
+        return days;
+    }
+
+
+    /**
+     * 运算逻辑
+     */
+    function countdetails(amount,markup,money_rate,modify_price,allday){
+        var lilv = (money_rate/100).toFixed(4);
+        var gongsibaojia ;
+        if(amount >= 10){ //大票金额
+             gongsibaojia = parseFloat((100000 * (lilv) * allday) / 360) ;
+        }else if(amount < 10){ //小票金额
+            gongsibaojia = parseFloat((100000 * (lilv) * allday) / 360) * (parseInt(amount) / 10);
+        }
+
+        if(markup != 0) {gongsibaojia = gongsibaojia + parseFloat(markup);}
+        if(modify_price) {gongsibaojia = gongsibaojia + parseFloat(modify_price)}
+        return gongsibaojia.toFixed(2);
+    }
+    /**
+     * 根据日期获取星期几
+     * @param sDate
+     * @returns {string}
+     */
+    function getWeekday(sDate){
+        var dt = new Date(sDate.replace(/-/g, '/'));
+        var a = ['星期日', '星期一','星期二','星期三','星期四','星期五','星期六'];
+        return a[dt.getDay()];
+    }
+
+    /**
+     * 获取票款
+     * @param amount            票面金额
+     * @param gongsibaojia      公司报价
+     * @param zhongduanbaojia   终端报价
+     */
+    function getPiaokuanjine(amount,gongsibaojia,zhongduanbaojia) {
+        var piaomianjine = parseFloat(amount) * parseFloat(10000);
+        var piaokuan;
+        if(zhongduanbaojia != 0 || zhongduanbaojia){  //有中介费的票款
+            var piaokuan = piaomianjine - ((parseFloat(piaomianjine)/100000)* parseFloat(zhongduanbaojia));
+        }else{ //无中介费的票款
+            var piaokuan = piaomianjine - ((parseFloat(piaomianjine)/100000)* parseFloat(gongsibaojia));
+        }
+        return piaokuan.toFixed(2);
+    }
+
+    function showxiaokuan(xiaokuan) {
+        if(xiaokuan){
+            $('#xiaokuan').show();
+            $('#xiaokuan1').show();
+            $('#xiaokuan2').show();
+            $('#xiaokuan3').show();
+        }else{
+            $('#xiaokuan').hide();
+            $('#xiaokuan1').hide();
+            $('#xiaokuan2').hide();
+            $('#xiaokuan3').hide();
+        }
+    }
+    function zhongduanbaojia(zhongduanbaojia,type) {
+        var amount  = $('#amount').val();
+        var gongsibaojia  = $('#gongsibaojia').val();
+        var zhongjiefei   = $('#zhongjiefei').val();
+        var piaomianjine = parseFloat(amount) * parseFloat(10000);
+        if (!amount || !gongsibaojia) return false;
+        getxiaokuan();
+        if(zhongduanbaojia >0){
+            var piaokuan = piaomianjine - ((parseFloat(piaomianjine)/100000)* parseFloat(zhongduanbaojia));
+            $("#piaokuan").val(piaokuan.toFixed(2));
+        }else if (!zhongduanbaojia || zhongduanbaojia <= 0){
+            var piaokuan = piaomianjine - ((parseFloat(piaomianjine)/100000)* parseFloat(gongsibaojia));
+            $("#piaokuan").val(piaokuan.toFixed(2));
+        }
+
+        if(type == 1){
+            $('#dapiaodakuanjine').val('');
+            $('#xiaopiaodakuanjine').val('');
+        }
+    }
+    
+    function  getxiaokuan() {
+        var zhongjiefei   = $('#zhongjiefei').val();
+        var gongsibaojia  = $('#gongsibaojia').val();
+        var amount  = $('#amount').val();
+        var piaomianjine = parseFloat(amount) * parseFloat(10000);
+        if(zhongjiefei && zhongjiefei != 0){
+            var xiaokuan     = (parseFloat(zhongjiefei) - parseFloat(gongsibaojia)) * (parseFloat(piaomianjine) / 100000);
+            $('#xiaokuantext').val(xiaokuan.toFixed(2))
+        }else{
+            $('#xiaokuantext').val(0);
+        }
+    }
+
+    function setempty() {
+            $('#zhongjiefei').val('');
+            $('#gongsibaojia').val('');
+            $('#amount').val('');
+            $("#piaokuan").val('');
+            $('#xiaokuantext').val('');
+            $('#piaohao').val('');
+            $('#bank').val('');
+            $('#starttime').val('');
+            $('#endtime').val('');
+            $('#xiaokuantext').val('');
+            $('#day').val('');
+            $('#money_rate').val('');
+            $('#markup').val('');
+            $('#modify_price').val('');
+            $('#xiaokuantext').val('');
+            $('#xiaokuantext').val('');
+            $("#allday").html('实际贴现0天')
+            $("#xingqiji").html('');
+            showxiaokuan();
+    }
+
+
+    function cleardakuanfei(){
+        var  selectVal = $('#selectdakuanfei').val();
+        if(selectVal == 1){ $('#dapiaodakuanjine').val('');} //大款票款扣除
+        else if(selectVal == 2){$('#xiaopiaodakuanjine').val('');}//小款票款扣除
+    }
+
+
+    !function () {
+        $('#dakuanzhanghao').on('keyup mouseout input',function(){
+            var $this = $(this),
+                v = $this.val();
+            /\S{5}/.test(v) && $this.val(v.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g, "$1 "));
+        });
+    }();
+
+    !function () {
+        $('#xiaokuanzhanghao').on('keyup mouseout input',function(){
+            var $this = $(this),
+                v = $this.val();
+            /\S{5}/.test(v) && $this.val(v.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g, "$1 "));
+        });
+    }();
+
+</script>
+<include file="Public/ft" />

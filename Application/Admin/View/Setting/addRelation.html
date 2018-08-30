@@ -1,0 +1,133 @@
+<include file="Public/shead" />
+<include file="Public/menu" />
+<!-------------------------------------------------------------------------------------------------------------------->
+
+<main class="main-cont content mCustomScrollbar">
+
+    <div class="page-wrap">
+        <section class="page-hd">
+            <header>
+                <h2 class="title"><i class="icon-columns"></i>添加企业关系链</h2>
+            </header>
+            <hr>
+        </section>
+
+        <form class="layui-form layui-form-pane" action="">
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 150px">上游企业名称</label>
+                <div class="layui-input-inline" style="width: auto">
+                    <foreach name="list" item="vo">
+                        <input type="checkbox" name="shangyou" title="{$vo.company}" value="{$vo.id}" <foreach name="shangyou" item="vo1"> <if condition="$vo.id eq $vo1">checked</if></foreach>>
+                    </foreach>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 150px;">贴现户/出票户/质押户</label>
+                <div class="layui-input-inline" style="width: auto">
+                    <input type="checkbox" name="res" title="{$res.company}" value="{$res.id}" disabled >
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="width: 150px">下游企业名称</label>
+                <div class="layui-input-inline" style="width: auto">
+                    <foreach name="list" item="vo">
+                        <input type="checkbox" name="xiayou" title="{$vo.company}" value="{$vo.id}" <foreach name="xiayou" item="vo1"> <if condition="$vo.id eq $vo1">checked</if></foreach>>
+                    </foreach>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="demo2">提交</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+
+
+
+    var postCompanyUrl  = '/index.php/Admin/setting/addRelation';
+
+
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form()
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+        form.verify({});
+
+
+        var new_shangyou = [];
+        var new_xiayou = [];
+        var res = '{$res.id}';
+
+        //监听提交
+        form.on('submit(demo2)', function(data){
+            new_shangyou.splice(0,new_shangyou.length);
+            new_xiayou.splice(0,new_xiayou.length);
+            $("input[name='shangyou']:checked").each(function (index,obj) {
+                new_shangyou.push(obj.value);
+            });
+
+            $("input[name='xiayou']:checked").each(function (index,obj) {
+                new_xiayou.push(obj.value);
+            });
+
+            if(isEmpty(new_shangyou)  &&  isEmpty(new_shangyou)){
+                layer.msg('请选择该企业上下游关系链');
+            }
+//            if(data.field.users == 0){
+//                layer.msg('请选择企业负责人',{icon:5,shift:6});
+//                return false;
+//            }
+            postData(postCompanyUrl,new_shangyou,res,new_xiayou)
+        });
+    });
+
+
+    function postData(postDataUrl,new_shangyou,res,new_xiayou) {
+        var loading      = layer.load(1,{shade: [0.5,'#3C3F41']},{time: 30*1000});
+        $.ajax({
+            type: "POST",
+            url: postDataUrl,
+            data: { shangyou: new_shangyou,res: res,xiayou:new_xiayou},
+            dataType: "json",
+            timeout:20000,
+            success: function(data){
+                layer.close(loading);
+                if(data.code == 200) {
+                    layer.msg(data.msg, {icon: 6},function () {
+                        location.href = '/index.php/Admin/setting/addRelation/id/'+res;
+                    });
+                }else{
+                    layer.msg(data.msg,{icon:5});
+                }
+            },
+            error:function (XMLHttpRequest, Status) {
+                layer.close(loading);
+                if(Status == 'timeout'){
+                    layer.close(index);
+                    layer.msg('请求超时',{icon:5});
+                }
+            }
+        })
+    }
+
+
+    function isEmpty(value) {
+        return (Array.isArray(value) && value.length === 0) || (Object.prototype.isPrototypeOf(value) && Object.keys(value).length === 0);
+    }
+
+
+
+</script>
+
+<include file="Public/ft" />
